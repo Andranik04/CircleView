@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PointerSpeedometer" >
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="withPointer" format="boolean"/>
+        <attr name="withValue" format="boolean"/>
+        <attr name="pointerType" format="enum">
+            <enum name="circle" value="0" />
+            <enum name="triangle" value="1" />
+        </attr>
+        <attr name="pointerColor" format="color"/>
+        <attr name="withGradient" format="boolean"/>
+        <attr name="gradientStartColor" format="color"/>
+        <attr name="gradientEndColor" format="color"/>
+    </declare-styleable>
+
+</resources>

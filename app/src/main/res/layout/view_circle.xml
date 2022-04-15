@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.example.test.LayerView
+        android:id="@+id/middleLayer"
+        android:layout_width="225dp"
+        android:layout_height="112.5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        app:strokeWidth="40dp"
+        app:withGradient="true"
+        app:gradientStartColor="@android:color/white"
+        app:gradientEndColor="@color/gray"/>
+
+    <com.example.test.LayerView
+        android:id="@+id/innerLayer"
+        android:layout_width="175dp"
+        android:layout_height="87.5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        app:strokeWidth="3dp"
+        app:withPointer="true"
+        app:pointerType="triangle"
+        app:pointerColor="@color/gray"
+        app:withGradient="true"
+        app:gradientStartColor="@android:color/white"
+        app:gradientEndColor="@color/gray"/>
+
+    <com.example.test.LayerView
+        android:id="@+id/outerLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        app:pointerType="circle"
+        app:strokeWidth="10dp"
+        app:withValue="true"
+        app:withPointer="true"
+        app:pointerColor="@color/orange"/>
+
+</RelativeLayout>
