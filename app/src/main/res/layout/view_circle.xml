@@ -2,40 +2,42 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.example.test.LayerView
         android:id="@+id/middleLayer"
-        android:layout_width="225dp"
-        android:layout_height="112.5dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="30dp"
         android:background="@android:color/transparent"
-        app:strokeWidth="40dp"
+        app:strokeWidth="44dp"
         app:withGradient="true"
         app:gradientStartColor="@android:color/white"
         app:gradientEndColor="@color/gray"/>
 
     <com.example.test.LayerView
         android:id="@+id/innerLayer"
-        android:layout_width="175dp"
-        android:layout_height="87.5dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="54dp"
         android:background="@android:color/transparent"
-        app:strokeWidth="3dp"
-        app:withPointer="true"
-        app:pointerType="triangle"
-        app:pointerColor="@color/gray"
-        app:withGradient="true"
+        app:gradientEndColor="@color/gray"
         app:gradientStartColor="@android:color/white"
-        app:gradientEndColor="@color/gray"/>
+        app:pointerColor="@color/gray"
+        app:pointerType="triangle"
+        app:strokeWidth="3dp"
+        app:withGradient="true"
+        app:withPointer="true" />
 
     <com.example.test.LayerView
         android:id="@+id/outerLayer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         app:pointerType="circle"
         app:strokeWidth="10dp"

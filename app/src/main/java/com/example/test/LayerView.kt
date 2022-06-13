@@ -18,7 +18,7 @@ class LayerView @JvmOverloads constructor(
 
     companion object {
         const val FULL_DEGREE = 180f
-        const val MOVE_DURATION = 2000L
+        const val MOVE_DURATION = 10000L
         const val MAX_VALUE = 100
     }
 
@@ -26,6 +26,7 @@ class LayerView @JvmOverloads constructor(
         CIRCLE,
         TRIANGLE
     }
+
     /// Private Variables
     private val rect = RectF()
     private val pointerPaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -39,8 +40,8 @@ class LayerView @JvmOverloads constructor(
     private var isGradientShow = false
 
     private var gradientStartColor = color(R.color.orange)
-    private var gradientEndColor =  color(R.color.blue)
-    private var pointerColor =  color(R.color.orange)
+    private var gradientEndColor = color(R.color.blue)
+    private var pointerColor = color(R.color.orange)
     private var pointerType: PointerType? = PointerType.CIRCLE
 
     private var strokeWidth = dpToPx(10f)
@@ -48,9 +49,10 @@ class LayerView @JvmOverloads constructor(
     private val pointerBackgroundRadius = dpToPx(20f)
     private var borderDistance = dpToPx(20f)
     private var circleBorderWidth = dpToPx(5f)
-    private var triangleSideWidth = dpToPx(20f)
+    private var triangleSideWidth = dpToPx(21f)
 
     private var alpha = 128
+
     init {
         initAttributeSet(context, attrs)
     }
@@ -100,12 +102,19 @@ class LayerView @JvmOverloads constructor(
         }
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(widthMeasureSpec, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(widthMeasureSpec / 2, MeasureSpec.EXACTLY)
+        )
+    }
+
     override fun onSizeChanged(xNew: Int, yNew: Int, xOld: Int, yOld: Int) {
         super.onSizeChanged(xNew, yNew, xOld, yOld)
         prepare()
     }
 
-    private fun prepare(){
+    private fun prepare() {
         val gradient = LinearGradient(
             0f,
             0f,
@@ -137,6 +146,8 @@ class LayerView @JvmOverloads constructor(
             strokeCap = Paint.Cap.BUTT
             strokeWidth = this@LayerView.strokeWidth
             alpha = this@LayerView.alpha
+            isDither = true
+            isAntiAlias = true
             if (isGradientShow)
                 shader = gradient
             else
@@ -166,13 +177,18 @@ class LayerView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        rect.set(borderDistance, borderDistance, width.toFloat() - borderDistance, width.toFloat() - borderDistance)
+        rect.set(
+            borderDistance,
+            borderDistance,
+            width.toFloat() - borderDistance,
+            width.toFloat() - borderDistance
+        )
         canvas.run {
             // Print background
             drawArc(rect, -FULL_DEGREE, FULL_DEGREE, false, pathBackgroundPaint)
 
             // Fill Path
-            if (isFilled){
+            if (isFilled) {
                 drawArc(rect, 0f, currentValue, false, targetDegreePaint)
             }
 
@@ -183,23 +199,49 @@ class LayerView @JvmOverloads constructor(
         }
     }
 
-    private fun drawPointer(canvas: Canvas){
-        val alpha = -currentValue + FULL_DEGREE / 2
-        val radian = (alpha * Math.PI / FULL_DEGREE).toFloat()
-        val r = rect.width() / 2
-        val x = sin(radian) * r + rect.width() / 2 + borderDistance
-        val y = cos(radian) * r + rect.height() / 2 + borderDistance
+    private fun drawPointer(canvas: Canvas) {
         when (pointerType) {
             PointerType.CIRCLE -> {
+                val rotationRadius = rect.width() / 2
+                val startingAngle =
+                    (kotlin.math.asin(pointerBackgroundRadius / rotationRadius) * FULL_DEGREE) / Math.PI
+                val fullDegree = FULL_DEGREE + 2 * startingAngle
+                val alpha = fullDegree - currentValue + startingAngle
+                val radian = (alpha * Math.PI / fullDegree).toFloat()
+                val x =
+                    cos(radian) * rotationRadius + (width - 2 * borderDistance) / 2 + borderDistance
+                val y =
+                    sin(radian) * rotationRadius + (width - 2 * borderDistance) / 2 + borderDistance
                 canvas.drawCircle(x, y, pointerBackgroundRadius, pointerBackgroundPaint)
                 canvas.drawCircle(x, y, pointerRadius, pointerPaint)
             }
             PointerType.TRIANGLE -> {
+//                val alpha = if(currentValue > -180)
+//                    currentValue - FULL_DEGREE / 2
+//                else
+//                    -currentValue + FULL_DEGREE / 2
+                val rotationRadius = rect.width() / 2
+                val startingAngle =
+                    (kotlin.math.asin(triangleSideWidth / (2 * rotationRadius)) * FULL_DEGREE) / Math.PI
+                val fullDegree = FULL_DEGREE + 2 * startingAngle
+                val alpha = fullDegree - currentValue + startingAngle
+                val radian = (alpha * Math.PI / fullDegree).toFloat()
+                val x =
+                    cos(radian) * rotationRadius + (width - 2 * borderDistance) / 2 + borderDistance
+                val y =
+                    sin(radian) * rotationRadius + (width - 2 * borderDistance) / 2 + borderDistance
+
+//                val alpha = -currentValue + FULL_DEGREE / 2
+//                println("/////////// $alpha")
+//                val radian = (alpha * Math.PI / FULL_DEGREE).toFloat()
+//                val r = rect.width() / 2
+//                val x = sin(radian) * r + rect.width() / 2 + borderDistance
+//                val y = cos(radian) * r + rect.height() / 2 + borderDistance
                 drawTriangle(
                     canvas,
-                    FULL_DEGREE - alpha,
+                    (startingAngle - FULL_DEGREE).toFloat(),
                     x,
-                    y - triangleSideWidth / 2,
+                    y,
                     triangleSideWidth.toInt()
                 )
             }
@@ -210,10 +252,10 @@ class LayerView @JvmOverloads constructor(
     private fun drawTriangle(canvas: Canvas, alpha: Float, x: Float, y: Float, width: Int) {
         val halfWidth = width / 2
         Path().apply {
-            moveTo(x, (y - halfWidth))
+            moveTo(x, (y - triangleSideWidth))
             lineTo(x - halfWidth, y + halfWidth)
             lineTo(x + halfWidth, y + halfWidth)
-            lineTo(x, y - halfWidth)
+            lineTo(x, y - triangleSideWidth)
             close()
         }.also {
             canvas.rotate(alpha, x, y)

@@ -24,4 +24,11 @@ class CircleView(context: Context, attrs: AttributeSet?) :
         innerLayer.setTarget(target)
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(widthMeasureSpec, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(widthMeasureSpec/2, MeasureSpec.EXACTLY)
+        )
+    }
+
 }
